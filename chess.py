@@ -101,7 +101,7 @@ def moveBishop(pos, col):
     tx = x2
     ty = y2
 
-    # check every cell along the way
+    # check every cell along the ways
     while x1 != tx and y1 != ty:
         if not isEmpty(tx, ty):
             print("Can't move there")
