@@ -172,6 +172,23 @@ def moveQueen(pos, col):
     return checkPath(x1, y1, x2, y2)
 
 
+# TODO: avoid check when moving
+# TODO: implement castling
+def moveKing(pos, col):
+    x = 8 - int(pos[2])
+    y = ord(pos[1]) - 97
+
+    if not isEmpty(x, y):
+        return False
+
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1):
+            if (0 <= x + i, y + j <= 7) and ((col and board[x + i][y + j] == K) or (not col and board[x + i][y + j] == k)):
+                board[x][y], board[x + i][y + j] = board[x + i][y + j], board[x][y]
+                return True
+    return False
+
+
 pprint(board)
 
 while True:
@@ -206,6 +223,12 @@ while True:
             colour = not colour
     elif re.search(r'^Q[a-h][1-8]-[a-h][1-8]$', move):
         if not moveQueen(move, colour):
+            print("Illegal move.")
+        else:
+            pprint(board)
+            colour = not colour
+    elif re.search(r'^K[a-h][1-8]$', move):
+        if not moveKing(move, colour):
             print("Illegal move.")
         else:
             pprint(board)
