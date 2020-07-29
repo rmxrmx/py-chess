@@ -36,6 +36,30 @@ def isEmpty(x, y):
     return True
 
 
+# checks that the path of the figure is clear
+def checkPath(x1, y1, x2, y2):
+    tx = x2
+    ty = y2
+
+    # check every cell along the way
+    while x1 != tx or y1 != ty:
+        print(tx, ty)
+        if not isEmpty(tx, ty):
+            print("Can't move there")
+            return False
+        if tx < x1:
+            tx += 1
+        elif tx > x1:
+            tx -= 1
+        if ty < y1:
+            ty += 1
+        elif ty > y1:
+            ty -= 1
+
+    board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
+    return True
+
+
 def movePawn(pos, col):
     # convert position to array-like
     x = 8 - int(pos[1])
@@ -59,13 +83,14 @@ def movePawn(pos, col):
             board[x][y], board[x - 1][y] = board[x - 1][y], board[x][y]
             return True
         # TODO: implement en passant mechanics
-        elif x == 3 and board[x - 2][y] == P:
+        elif x == 3 and board[x - 2][y] == p:
             board[x][y], board[x - 2][y] = board[x - 2][y], board[x][y]
             return True
     return False
 
 
 def moveKnight(pos, col):
+    # TODO: rework coordinates to reduce code copy/paste
     x1 = 8 - int(pos[2])
     y1 = ord(pos[1]) - 97
     x2 = 8 - int(pos[5])
@@ -81,6 +106,7 @@ def moveKnight(pos, col):
     if (col and board[x1][y1] == N) or (not col and board[x1][y1] == n):
         board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
         return True
+
     return False
 
 
@@ -90,7 +116,7 @@ def moveBishop(pos, col):
     x2 = 8 - int(pos[5])
     y2 = ord(pos[4]) - 97
 
-    if not (col and board[x1][y1] == B) or (not col and board[x1][y1] == b):
+    if not ((col and board[x1][y1] == B) or (not col and board[x1][y1] == b)):
         print("No bishop")
         return False
 
@@ -98,26 +124,27 @@ def moveBishop(pos, col):
         print("Not a bishop move")
         return False
 
-    tx = x2
-    ty = y2
+    return checkPath(x1, y1, x2, y2)
 
-    # check every cell along the ways
-    while x1 != tx and y1 != ty:
-        if not isEmpty(tx, ty):
-            print("Can't move there")
-            return False
-        if tx < x1:
-            tx += 1
-        else:
-            tx -= 1
-        if ty < y1:
-            ty += 1
-        else:
-            ty -= 1
 
-    board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
-    return True
+def moveRook(pos, col):
+    x1 = 8 - int(pos[2])
+    y1 = ord(pos[1]) - 97
+    x2 = 8 - int(pos[5])
+    y2 = ord(pos[4]) - 97
 
+    if not ((col and board[x1][y1] == R) or (not col and board[x1][y1] == r)):
+        print("No rook")
+        return False
+
+    if not (x1 == x2 and y1 != y2 or x1 != x2 and y1 == y2):
+        print("Not a rook move")
+        return False
+
+    return checkPath(x1, y1, x2, y2)
+
+
+pprint(board)
 
 while True:
     move = input("Input: ")
@@ -129,7 +156,7 @@ while True:
         else:
             pprint(board)
             colour = not colour
-
+    # TODO: rework into a switch statement
     elif re.search(r'^N[a-h][1-8]-[a-h][1-8]$', move):
         if not moveKnight(move, colour):
             print("Illegal move.")
@@ -139,6 +166,12 @@ while True:
 
     elif re.search(r'^B[a-h][1-8]-[a-h][1-8]$', move):
         if not moveBishop(move, colour):
+            print("Illegal move.")
+        else:
+            pprint(board)
+            colour = not colour
+    elif re.search(r'^R[a-h][1-8]-[a-h][1-8]$', move):
+        if not moveRook(move, colour):
             print("Illegal move.")
         else:
             pprint(board)
