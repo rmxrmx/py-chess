@@ -84,7 +84,7 @@ def movePawn(pos, col):
             board[x][y], board[x + 1][y] = board[x + 1][y], board[x][y]
             return True
         # TODO: implement en passant mechanics
-        elif x == 4 and board[x + 2][y] == P:
+        elif x == 4 and board[x + 2][y] == P and isEmpty(x + 1, y):
             board[x][y], board[x + 2][y] = board[x + 2][y], board[x][y]
             return True
     else:
@@ -93,7 +93,7 @@ def movePawn(pos, col):
             board[x][y], board[x - 1][y] = board[x - 1][y], board[x][y]
             return True
         # TODO: implement en passant mechanics
-        elif x == 3 and board[x - 2][y] == p:
+        elif x == 3 and board[x - 2][y] == p and isEmpty(x - 1, y):
             board[x][y], board[x - 2][y] = board[x - 2][y], board[x][y]
             return True
     return False
