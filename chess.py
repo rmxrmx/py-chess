@@ -15,6 +15,7 @@ q = 'q'
 k = 'k'
 p = 'p'
 M = "."
+
 board = [[r, n, b, q, k, b, n, r],
          [p, p, p, p, p, p, p, p],
          [M, M, M, M, M, M, M, M],
@@ -30,6 +31,7 @@ colour = True
 # check whether tile is empty
 def isEmpty(x, y):
     if board[x][y] != M:
+        print("Not empty")
         return False
     return True
 
@@ -40,8 +42,8 @@ def movePawn(pos, col):
     y = ord(pos[0]) - 97
 
     if not isEmpty(x, y):
-        print("Not empty")
         return False
+
     if col:
         print("White")
         if board[x + 1][y] == P:
@@ -74,13 +76,47 @@ def moveKnight(pos, col):
         return False
 
     if not isEmpty(x2, y2):
-        print("Not empty")
         return False
 
     if (col and board[x1][y1] == N) or (not col and board[x1][y1] == n):
         board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
         return True
     return False
+
+
+def moveBishop(pos, col):
+    x1 = 8 - int(pos[2])
+    y1 = ord(pos[1]) - 97
+    x2 = 8 - int(pos[5])
+    y2 = ord(pos[4]) - 97
+
+    if not (col and board[x1][y1] == B) or (not col and board[x1][y1] == b):
+        print("No bishop")
+        return False
+
+    if not (abs(x1 - x2) == abs(y1 - y2) and x1 != x2):
+        print("Not a bishop move")
+        return False
+
+    tx = x2
+    ty = y2
+
+    # check every cell along the way
+    while x1 != tx and y1 != ty:
+        if not isEmpty(tx, ty):
+            print("Can't move there")
+            return False
+        if tx < x1:
+            tx += 1
+        else:
+            tx -= 1
+        if ty < y1:
+            ty += 1
+        else:
+            ty -= 1
+
+    board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
+    return True
 
 
 while True:
@@ -96,6 +132,13 @@ while True:
 
     elif re.search(r'^N[a-h][1-8]-[a-h][1-8]$', move):
         if not moveKnight(move, colour):
+            print("Illegal move.")
+        else:
+            pprint(board)
+            colour = not colour
+
+    elif re.search(r'^B[a-h][1-8]-[a-h][1-8]$', move):
+        if not moveBishop(move, colour):
             print("Illegal move.")
         else:
             pprint(board)
