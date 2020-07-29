@@ -24,7 +24,6 @@ board = [[r, n, b, q, k, b, n, r],
          [M, M, M, M, M, M, M, M],
          [P, P, P, P, P, P, P, P],
          [R, N, B, Q, K, B, N, R]]
-
 colour = True
 
 
@@ -34,6 +33,17 @@ def isEmpty(x, y):
         print("Not empty")
         return False
     return True
+
+
+# check if the position given can be moved to by the queen
+def queenMove(x1, y1, x2, y2):
+    # bishop-like
+    if abs(x1 - x2) == abs(y1 - y2) and x1 != x2:
+        return True
+    # rook-like
+    elif x1 == x2 and y1 != y2 or x1 != x2 and y1 == y2:
+        return True
+    return False
 
 
 # checks that the path of the figure is clear
@@ -96,6 +106,10 @@ def moveKnight(pos, col):
     x2 = 8 - int(pos[5])
     y2 = ord(pos[4]) - 97
 
+    if not ((col and board[x1][y1] == N) or (not col and board[x1][y1] == n)):
+        print("No knight")
+        return False
+
     if not (abs(x1 - x2) == 2 and abs(y1 - y2) == 1 or abs(x1 - x2) == 1 and abs(y1 - y2) == 2):
         print("Not a knight move")
         return False
@@ -103,11 +117,8 @@ def moveKnight(pos, col):
     if not isEmpty(x2, y2):
         return False
 
-    if (col and board[x1][y1] == N) or (not col and board[x1][y1] == n):
-        board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
-        return True
-
-    return False
+    board[x1][y1], board[x2][y2] = board[x2][y2], board[x1][y1]
+    return True
 
 
 def moveBishop(pos, col):
@@ -144,6 +155,23 @@ def moveRook(pos, col):
     return checkPath(x1, y1, x2, y2)
 
 
+def moveQueen(pos, col):
+    x1 = 8 - int(pos[2])
+    y1 = ord(pos[1]) - 97
+    x2 = 8 - int(pos[5])
+    y2 = ord(pos[4]) - 97
+
+    if not ((col and board[x1][y1] == Q) or (not col and board[x1][y1] == q)):
+        print("No Queen")
+        return False
+
+    if not queenMove(x1, y1, x2, y2):
+        print("Not a Queen move")
+        return False
+
+    return checkPath(x1, y1, x2, y2)
+
+
 pprint(board)
 
 while True:
@@ -172,6 +200,12 @@ while True:
             colour = not colour
     elif re.search(r'^R[a-h][1-8]-[a-h][1-8]$', move):
         if not moveRook(move, colour):
+            print("Illegal move.")
+        else:
+            pprint(board)
+            colour = not colour
+    elif re.search(r'^Q[a-h][1-8]-[a-h][1-8]$', move):
+        if not moveQueen(move, colour):
             print("Illegal move.")
         else:
             pprint(board)
