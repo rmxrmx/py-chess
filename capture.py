@@ -1,5 +1,4 @@
-from func import isEmpty
-from config import board, P, p, M
+from config import board, P, p, M, enpassant
 
 
 def capturePawn(pos, col):
@@ -10,29 +9,35 @@ def capturePawn(pos, col):
     if abs(y1 - y2) != 1:
         return False
 
-    if isEmpty(x, y2):
-        return False
-
     if col:
         if board[x + 1][y1] != P:
             print("No pawn")
-            print(x + 1, y1)
             return False
-        # not a black piece
-        elif ord(board[x][y2]) < 97:
+
+        # not a black piece and not en passant
+        elif ord(board[x][y2]) < 97 and enpassant[1] != pos[-2:]:
             print("Not capturing a black piece")
             return False
+
         else:
             board[x + 1][y1] = M
             board[x][y2] = P
+            if enpassant[1]:
+                board[x + 1][y2] = M
+
     else:
         if board[x - 1][y1] != p:
             print("No pawn")
             return False
-        elif ord(board[x][y2]) > 90:
+
+        elif (ord(board[x][y2]) > 90 or board[x][y2] == M) and enpassant[0] != pos[-2:]:
             print("Not capturing a white piece")
             return False
+
         else:
             board[x - 1][y1] = M
             board[x][y2] = p
+            if enpassant[0]:
+                board[x - 1][y2] = M
+
     return True

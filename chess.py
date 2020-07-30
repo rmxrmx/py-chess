@@ -37,3 +37,8 @@ while True:
             changeTurn()
         else:
             print("Illegal move.")
+    # disable enpassant if not used
+    if config.colour:
+        enpassant[0] = ""
+    else:
+        enpassant[1] = ""

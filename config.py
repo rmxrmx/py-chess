@@ -22,3 +22,5 @@ board = [[r, n, b, q, k, b, n, r],
          [P, P, P, P, P, P, P, P],
          [R, N, B, Q, K, B, N, R]]
 colour = True
+
+enpassant = ["", ""]

@@ -1,5 +1,5 @@
 from func import isEmpty
-from config import board, P, N, B, R, Q, K, p, n, b, r, q, k
+from config import board, P, N, B, R, Q, K, p, n, b, r, q, k, enpassant
 
 
 # check if the position given can be moved to by the queen
@@ -50,19 +50,24 @@ def movePawn(pos, col):
         if board[x + 1][y] == P:
             board[x][y], board[x + 1][y] = board[x + 1][y], board[x][y]
             return True
-        # TODO: implement en passant mechanics
+
+        # en passant mechanics
         elif x == 4 and board[x + 2][y] == P and isEmpty(x + 1, y):
             board[x][y], board[x + 2][y] = board[x + 2][y], board[x][y]
+            enpassant[0] = pos[0] + str(int(pos[1]) - 1)
             return True
     else:
         print("Black")
         if board[x - 1][y] == p:
             board[x][y], board[x - 1][y] = board[x - 1][y], board[x][y]
             return True
-        # TODO: implement en passant mechanics
+
+        # en passant mechanics
         elif x == 3 and board[x - 2][y] == p and isEmpty(x - 1, y):
             board[x][y], board[x - 2][y] = board[x - 2][y], board[x][y]
+            enpassant[1] = pos[0] + str(int(pos[1]) + 1)
             return True
+
     return False
 
 
