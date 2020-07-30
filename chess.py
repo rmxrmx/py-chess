@@ -27,6 +27,12 @@ board = [[r, n, b, q, k, b, n, r],
 colour = True
 
 
+def changeTurn():
+    global colour
+    pprint(board)
+    colour = not colour
+
+
 # check whether tile is empty
 def isEmpty(x, y):
     if board[x][y] != M:
@@ -181,12 +187,50 @@ def moveKing(pos, col):
     if not isEmpty(x, y):
         return False
 
+    # check for king within the spaces
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
-            if (0 <= x + i, y + j <= 7) and ((col and board[x + i][y + j] == K) or (not col and board[x + i][y + j] == k)):
+            if (0 <= x + i, y + j <= 7) and (
+                    (col and board[x + i][y + j] == K) or (not col and board[x + i][y + j] == k)):
                 board[x][y], board[x + i][y + j] = board[x + i][y + j], board[x][y]
                 return True
     return False
+
+
+def capturePawn(pos, col):
+    y1 = ord(pos[0]) - 97
+    x = 8 - int(pos[3])
+    y2 = ord(pos[2]) - 97
+
+    if abs(y1 - y2) != 1:
+        return False
+
+    if isEmpty(x, y2):
+        return False
+
+    if col:
+        if board[x + 1][y1] != P:
+            print("No pawn")
+            print(x + 1, y1)
+            return False
+        # not a black piece
+        elif ord(board[x][y2]) < 97:
+            print("Not capturing a black piece")
+            return False
+        else:
+            board[x + 1][y1] = M
+            board[x][y2] = P
+    else:
+        if board[x - 1][y1] != p:
+            print("No pawn")
+            return False
+        elif ord(board[x][y2]) > 90:
+            print("Not capturing a white piece")
+            return False
+        else:
+            board[x - 1][y1] = M
+            board[x][y2] = p
+    return True
 
 
 pprint(board)
@@ -195,41 +239,28 @@ while True:
     move = input("Input: ")
     if move == "x":
         break
-    if re.search(r'^[a-h][1-8]$', move):
-        if not movePawn(move, colour):
-            print("Illegal move.")
-        else:
-            pprint(board)
-            colour = not colour
-    # TODO: rework into a switch statement
-    elif re.search(r'^N[a-h][1-8]-[a-h][1-8]$', move):
-        if not moveKnight(move, colour):
-            print("Illegal move.")
-        else:
-            pprint(board)
-            colour = not colour
 
-    elif re.search(r'^B[a-h][1-8]-[a-h][1-8]$', move):
-        if not moveBishop(move, colour):
-            print("Illegal move.")
+    if re.search(r'^[a-h][1-8]$', move):
+        if movePawn(move, colour):
+            changeTurn()
         else:
-            pprint(board)
-            colour = not colour
-    elif re.search(r'^R[a-h][1-8]-[a-h][1-8]$', move):
-        if not moveRook(move, colour):
             print("Illegal move.")
+    # TODO: rework into a switch statement
+    elif re.search(r'^[NBRQ][a-h][1-8]-[a-h][1-8]$', move):
+        if move[0] == 'N' and moveKnight(move, colour) or \
+                move[0] == 'B' and moveBishop(move, colour) or \
+                move[0] == 'R' and moveRook(move, colour) or \
+                move[0] == 'Q' and moveQueen(move, colour):
+            changeTurn()
         else:
-            pprint(board)
-            colour = not colour
-    elif re.search(r'^Q[a-h][1-8]-[a-h][1-8]$', move):
-        if not moveQueen(move, colour):
             print("Illegal move.")
-        else:
-            pprint(board)
-            colour = not colour
     elif re.search(r'^K[a-h][1-8]$', move):
-        if not moveKing(move, colour):
-            print("Illegal move.")
+        if moveKing(move, colour):
+            changeTurn()
         else:
-            pprint(board)
-            colour = not colour
+            print("Illegal move.")
+    elif re.search(r'^[a-h]x[a-h][1-8]$', move):
+        if capturePawn(move, colour):
+            changeTurn()
+        else:
+            print("Illegal move.")
