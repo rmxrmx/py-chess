@@ -10,6 +10,14 @@ def queenMove(x1, y1, x2, y2):
     # rook-like
     elif x1 == x2 and y1 != y2 or x1 != x2 and y1 == y2:
         return True
+    print("Not a queen move")
+    return False
+
+
+def knightMove(x1, y1, x2, y2):
+    if abs(x1 - x2) == 2 and abs(y1 - y2) == 1 or abs(x1 - x2) == 1 and abs(y1 - y2) == 2:
+        return True
+    print("Not a knight move")
     return False
 
 
@@ -82,8 +90,7 @@ def moveKnight(pos, col):
         print("No knight")
         return False
 
-    if not (abs(x1 - x2) == 2 and abs(y1 - y2) == 1 or abs(x1 - x2) == 1 and abs(y1 - y2) == 2):
-        print("Not a knight move")
+    if not knightMove(x1, y1, x2, y2):
         return False
 
     if not isEmpty(x2, y2):

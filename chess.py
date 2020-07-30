@@ -37,6 +37,11 @@ while True:
             changeTurn()
         else:
             print("Illegal move.")
+    elif re.search(r'^[NBRQK][a-h][1-8]x[a-h][1-8]$', move):
+        if move[0] == 'N' and captureKnight(move, config.colour):
+            changeTurn()
+        else:
+            print("Illegal move.")
     # disable enpassant if not used
     if config.colour:
         enpassant[0] = ""
