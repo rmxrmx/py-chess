@@ -1,5 +1,6 @@
-from func import isEmpty
-from config import board, P, N, B, R, Q, K, p, n, b, r, q, k, enpassant
+from func import isEmpty, isPiece
+from config import board, P, N, B, R, Q, K, enpassant
+import config
 
 
 # check if the position given can be moved to by the queen
@@ -45,7 +46,7 @@ def checkPath(x1, y1, x2, y2):
     return True
 
 
-def movePawn(pos, col):
+def movePawn(pos):
     # convert position to array-like
     x = 8 - int(pos[1])
     y = ord(pos[0]) - 97
@@ -53,25 +54,25 @@ def movePawn(pos, col):
     if not isEmpty(x, y):
         return False
 
-    if col:
+    if config.colour:
         print("White")
-        if board[x + 1][y] == P:
+        if isPiece(x + 1, y, P):
             board[x][y], board[x + 1][y] = board[x + 1][y], board[x][y]
             return True
 
         # en passant mechanics
-        elif x == 4 and board[x + 2][y] == P and isEmpty(x + 1, y):
+        elif x == 4 and isPiece(x + 2, y, P) and isEmpty(x + 1, y):
             board[x][y], board[x + 2][y] = board[x + 2][y], board[x][y]
             enpassant[0] = pos[0] + str(int(pos[1]) - 1)
             return True
     else:
         print("Black")
-        if board[x - 1][y] == p:
+        if isPiece(x - 1, y, P):
             board[x][y], board[x - 1][y] = board[x - 1][y], board[x][y]
             return True
 
         # en passant mechanics
-        elif x == 3 and board[x - 2][y] == p and isEmpty(x - 1, y):
+        elif x == 3 and isPiece(x - 2, y, P) and isEmpty(x - 1, y):
             board[x][y], board[x - 2][y] = board[x - 2][y], board[x][y]
             enpassant[1] = pos[0] + str(int(pos[1]) + 1)
             return True
@@ -79,14 +80,9 @@ def movePawn(pos, col):
     return False
 
 
-def moveKnight(pos, col):
-    # TODO: rework coordinates to reduce code copy/paste
-    x1 = 8 - int(pos[2])
-    y1 = ord(pos[1]) - 97
-    x2 = 8 - int(pos[5])
-    y2 = ord(pos[4]) - 97
+def moveKnight(x1, y1, x2, y2):
 
-    if not ((col and board[x1][y1] == N) or (not col and board[x1][y1] == n)):
+    if not isPiece(x1, y1, N):
         print("No knight")
         return False
 
@@ -100,13 +96,9 @@ def moveKnight(pos, col):
     return True
 
 
-def moveBishop(pos, col):
-    x1 = 8 - int(pos[2])
-    y1 = ord(pos[1]) - 97
-    x2 = 8 - int(pos[5])
-    y2 = ord(pos[4]) - 97
+def moveBishop(x1, y1, x2, y2):
 
-    if not ((col and board[x1][y1] == B) or (not col and board[x1][y1] == b)):
+    if not isPiece(x1, y1, B):
         print("No bishop")
         return False
 
@@ -117,13 +109,9 @@ def moveBishop(pos, col):
     return checkPath(x1, y1, x2, y2)
 
 
-def moveRook(pos, col):
-    x1 = 8 - int(pos[2])
-    y1 = ord(pos[1]) - 97
-    x2 = 8 - int(pos[5])
-    y2 = ord(pos[4]) - 97
+def moveRook(x1, y1, x2, y2):
 
-    if not ((col and board[x1][y1] == R) or (not col and board[x1][y1] == r)):
+    if not isPiece(x1, y1, R):
         print("No rook")
         return False
 
@@ -134,13 +122,9 @@ def moveRook(pos, col):
     return checkPath(x1, y1, x2, y2)
 
 
-def moveQueen(pos, col):
-    x1 = 8 - int(pos[2])
-    y1 = ord(pos[1]) - 97
-    x2 = 8 - int(pos[5])
-    y2 = ord(pos[4]) - 97
+def moveQueen(x1, y1, x2, y2):
 
-    if not ((col and board[x1][y1] == Q) or (not col and board[x1][y1] == q)):
+    if not isPiece(x1, y1, Q):
         print("No Queen")
         return False
 
@@ -153,7 +137,7 @@ def moveQueen(pos, col):
 
 # TODO: avoid check when moving
 # TODO: implement castling
-def moveKing(pos, col):
+def moveKing(pos):
     x = 8 - int(pos[2])
     y = ord(pos[1]) - 97
 
@@ -163,8 +147,7 @@ def moveKing(pos, col):
     # check for king within the spaces
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
-            if (0 <= x + i <= 7 and 0 <= y + j <= 7) and (
-                    (col and board[x + i][y + j] == K) or (not col and board[x + i][y + j] == k)):
+            if (0 <= x + i <= 7 and 0 <= y + j <= 7) and isPiece(x + i, y + j, K):
                 board[x][y], board[x + i][y + j] = board[x + i][y + j], board[x][y]
                 return True
     return False

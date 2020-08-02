@@ -13,3 +13,11 @@ def isEmpty(x, y):
         print("Not empty")
         return False
     return True
+
+
+def isPiece(x, y, piece):
+    if config.colour and config.board[x][y] == str.upper(piece):
+        return True
+    elif not config.colour and config.board[x][y] == str.lower(piece):
+        return True
+    return False
