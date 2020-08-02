@@ -22,6 +22,12 @@ def knightMove(x1, y1, x2, y2):
     return False
 
 
+def bishopMove(x1, y1, x2, y2):
+    if not (abs(x1 - x2) == abs(y1 - y2) and x1 != x2):
+        print("Not a bishop move")
+        return False
+
+
 # checks that the path of the figure is clear
 def checkPath(x1, y1, x2, y2):
     tx = x2
@@ -133,6 +139,7 @@ def moveQueen(x1, y1, x2, y2):
         return False
 
     return checkPath(x1, y1, x2, y2)
+# TODO: rework movement into a single function move(x1, y1, x2, y2, PIECE)
 
 
 # TODO: avoid check when moving

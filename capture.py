@@ -58,7 +58,6 @@ def capturePawn(pos):
 
 
 def captureKnight(x1, y1, x2, y2):
-    # TODO: rework coordinates to reduce code copy/paste
 
     if not isPiece(x1, y1, N):
         print("No knight")
@@ -74,3 +73,4 @@ def captureKnight(x1, y1, x2, y2):
     board[x2][y2] = board[x1][y1]
     board[x1][y1] = M
     return True
+# TODO: rework captures into a single function - capture(x1, y1, x2, y2, PIECE)
